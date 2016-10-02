@@ -1,3 +1,5 @@
+from __future__ import print_function
+from builtins import range
 import numpy as np
 import tensorflow as tf
 import gym
@@ -41,7 +43,7 @@ history["rollout_time"] = []
 history["learn_time"] = []
 history["mean_reward"] = []
 
-for iteration in xrange(args.n_iter):
+for iteration in range(args.n_iter):
 
     # runs a bunch of async processes that collect rollouts
     rollout_start = time.time()
@@ -58,8 +60,8 @@ for iteration in xrange(args.n_iter):
     learner_tasks.join()
     new_policy_weights, mean_reward = learner_results.get()
     learn_time = (time.time() - learn_start) / 60.0
-    print "-------- Iteration %d ----------" % iteration
-    print "Total time: %.2f mins" % ((time.time() - start_time) / 60.0)
+    print("-------- Iteration %d ----------" % iteration)
+    print("Total time: %.2f mins" % ((time.time() - start_time) / 60.0))
 
     history["rollout_time"].append(rollout_time)
     history["learn_time"].append(learn_time)

@@ -1,3 +1,4 @@
+from __future__ import print_function
 import numpy as np
 import tensorflow as tf
 import gym
@@ -165,8 +166,8 @@ class TRPO(multiprocessing.Process):
         shs = 0.5 * stepdir.dot(fisher_vector_product(stepdir))
 
         lm = np.sqrt(shs / self.args.max_kl)
-        print shs
-        print lm
+        print(shs)
+        print(lm)
 
         fullstep = stepdir / lm
         negative_g_dot_steppdir = -g.dot(stepdir)
@@ -194,7 +195,7 @@ class TRPO(multiprocessing.Process):
         stats["KL between old and new distribution"] = kl_after
         stats["Surrogate loss"] = surrogate_after
         # print ("\n********** Iteration {} ************".format(i))
-        for k, v in stats.iteritems():
+        for k, v in stats.items():
             print(k + ": " + " " * (40 - len(k)) + str(v))
 
         return stats["Average sum of rewards per episode"]

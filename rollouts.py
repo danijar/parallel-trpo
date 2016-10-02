@@ -1,3 +1,5 @@
+from __future__ import print_function, division
+from builtins import range
 import numpy as np
 import tensorflow as tf
 import multiprocessing
@@ -67,7 +69,7 @@ class Actor(multiprocessing.Process):
                 self.task_q.task_done()
                 self.result_q.put(path)
             elif next_task == 2:
-                print "kill message"
+                print("kill message")
                 if self.monitor:
                     self.env.monitor.close()
                 self.task_q.task_done()
@@ -84,7 +86,7 @@ class Actor(multiprocessing.Process):
     def rollout(self):
         obs, actions, rewards, action_dists_mu, action_dists_logstd = [], [], [], [], []
         ob = filter(self.env.reset())
-        for i in xrange(self.args.max_pathlength - 1):
+        for i in range(self.args.max_pathlength - 1):
             obs.append(ob)
             action, action_dist_mu, action_dist_logstd = self.act(ob)
             actions.append(action)
@@ -112,7 +114,7 @@ class ParallelRollout():
         self.actors = []
         self.actors.append(Actor(self.args, self.tasks, self.results, 9999, args.monitor))
 
-        for i in xrange(self.args.num_threads-1):
+        for i in range(self.args.num_threads-1):
             self.actors.append(Actor(self.args, self.tasks, self.results, 37*(i+3), False))
 
         for a in self.actors:
@@ -126,10 +128,12 @@ class ParallelRollout():
 
 
         # keep 20,000 timesteps per update
-        num_rollouts = self.args.timesteps_per_batch / self.average_timesteps_in_episode
-        print num_rollouts
+        num_rollouts = int(
+            self.args.timesteps_per_batch /
+            self.average_timesteps_in_episode)
+        print(num_rollouts)
 
-        for i in xrange(num_rollouts):
+        for i in range(num_rollouts):
             self.tasks.put(1)
 
         self.tasks.join()
@@ -143,10 +147,10 @@ class ParallelRollout():
         return paths
 
     def set_policy_weights(self, parameters):
-        for i in xrange(self.args.num_threads):
+        for i in range(self.args.num_threads):
             self.tasks.put(parameters)
         self.tasks.join()
 
     def end(self):
-        for i in xrange(self.args.num_threads):
+        for i in range(self.args.num_threads):
             self.tasks.put(2)
